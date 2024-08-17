@@ -13,7 +13,6 @@ async function retrieveDecks(url){
         const response = await fetch(url);
         const data = await response.json();
         const decks = {playerDeck : data.p1Deck, compDeck : data.p2Deck};
-        console.log(decks);
         return decks;
     }catch(error){
         console.log(`Retrieving decks has failed with error: \n${error}`)
@@ -26,7 +25,7 @@ function manipulateDeckItem(manipType, deck, fromPos, toPos){
     if(manipType == 'move'){
         deck.splice(toPos, 0, deck.splice(fromPos, 1)[0]);
     }else if(manipType == 'remove'){
-        res = deck.splice(fromPos);
+        res = deck.splice(fromPos,1);
         return res[0];
     }else{
         console.log("Mainpulation type required for manipulateDeckItem function, choose either 'move' or 'remove'.");
@@ -38,10 +37,21 @@ function compPlayerChoice(playState,currentCard){
         let compRpsChoice = Math.ceil(Math.random()*3);
         return compRpsChoice;
     }else if(playState == "cardPlay"){
-        const compStatChoice = Object.entries(currentCard.powerstats).sort(function(a, b) {
+        console.log(currentCard);
+        //implemented to have the computer choose between a random stat or its highest stat at random
+        let randMod = Math.ceil(Math.random()*2);
+        let compStatChoice
+        if(randMod == 1){
+            compStatChoice = Object.entries(currentCard.powerstats).sort(function(a, b) {
             return b[1] - a[1];
-          })[0];
-          return compStatChoice[0];
+          })[0][0];
+        }else{
+            let randNum = Math.floor(Math.random()*Object.keys(currentCard.powerstats).length);
+            compStatChoice = Object.keys(currentCard.powerstats)[randNum];
+            console.log(randNum);
+            console.log(compStatChoice);
+        }
+          return compStatChoice;
     }
 }
 //takes player option and comp option as a number between 1 and 3 and outputs a rock paper scissors winner
@@ -97,26 +107,29 @@ async function playGameMain(url, gameState){
         let decks = await retrieveDecks(url);
         console.log(`Decks retrieved. Initilizing decks`)
         //declaring all these variables now so I don't re-declare them repeatedly in the while loop
+        console.log(decks);
         let playersDeck = decks.playerDeck;
         let computersDeck = decks.compDeck;
-        console.log(playersDeck + computersDeck);
         let compRpsChoice = '';
         let rpsRes = '';
         let compCurrentCard = '';
         let playerCurrentCard = '';
         let battleRes = '';
         //runs the game loop while player or computer has one card in their deck
-        while(!(playersDeck.length === 0) && !(computersDeck.length === 0)){
+        while(!(playersDeck.length === 0) && !(computersDeck.length === 0) && !(typeof computersDeck[0] == 'undefined') && !(typeof playersDeck[0] == 'undefined')){
             playState = 'rps';
-            console.log(playState);
+            console.log(computersDeck);
+            console.log(playersDeck);
             compRpsChoice = compPlayerChoice(playState);
             rpsRes = await rps(compRpsChoice,2);//placeholder values for testing, will need to create javascript that creates an interface for button input and pop ups to put player values into play
-            console.log(rpsRes.resMessage + `\n ${playState}`);
+            console.log(rpsRes.resMessage);
             compCurrentCard = computersDeck[0];
-            playerCurrentCard = playersDeck[0];
+            playerCurrentCard = playersDeck[0]; 
+            console.log(`Player card: ${playerCurrentCard}\nComputer Card: ${compCurrentCard}`);
             playState = 'cardPlay'
             if(rpsRes.resWinner === 0){
                 let compStatChoice = compPlayerChoice(playState, compCurrentCard);//this declaration is an acception because idk, gonna see if it breaks shit later down the line
+                //add a status update to inform the player that the computer has chosen a stat.
                 battleRes = await cardBattle(compStatChoice, compCurrentCard, playerCurrentCard);
                 console.log(battleRes);
             }else{
@@ -124,7 +137,6 @@ async function playGameMain(url, gameState){
                 battleRes = await cardBattle(compStatChoice, compCurrentCard, playerCurrentCard);
                 console.log(battleRes);
             }
-            console.log(battleRes.winner)
             let winnings = {};
             switch(battleRes.winner){
             case 0:
@@ -146,6 +158,14 @@ async function playGameMain(url, gameState){
                 console.log("Unexpected error ocurred, winner int out of range.");
                 break;
             }
+            //Moves to new card for both decks at the end of the round.
+            if(!(playersDeck.length === 1)){
+             manipulateDeckItem('move',playersDeck,0,playersDeck.length - 1);
+            }
+            if(!(computersDeck.length === 1)){
+                manipulateDeckItem('move',computersDeck,0,computersDeck.length - 1)
+            }
+            console.log(`Players deck size: ${playersDeck.length}\nComputers Deck size: ${computersDeck.length}`);
 
         }
     }catch(error){

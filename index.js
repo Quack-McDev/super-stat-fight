@@ -10,7 +10,7 @@ import config from "./config.js"
 const API_KEY = config._superHeroAPIKey;
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const currentCharactersInLib = 731;
-const standardHandSize = 2;
+const standardHandSize = 1;
 const app = express();
 const superheroAPIAddress = "https://superheroapi.com/api/" + API_KEY + "/"
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -29,9 +29,19 @@ async function retrieveHand(p1cards, p2cards){
      //retrieves amount of card data up to standard hand size and stores it in cardsHand
      for (let i=0; i<=standardHandSize-1; i++){
         //retrieves a random character from the available library of characters
-        const card1 = await axios.get(superheroAPIAddress + Math.ceil(Math.random()*currentCharactersInLib));
+        let card1 = await axios.get(superheroAPIAddress + Math.ceil(Math.random()*currentCharactersInLib));
+        let card2 = await axios.get(superheroAPIAddress + Math.ceil(Math.random()*currentCharactersInLib));
+        for(const stats in card1.data.powerstats){
+            if (card1.data.powerstats[stats] === 'null'){
+                card1.data.powerstats[stats] = 0
+            }
+        }
+        for(const prop in card2.data.powerstats){
+            if (card2.data.powerstats[prop] === 'null'){
+                card2.data.powerstats[prop] = 0
+            }
+        }
         p1cards.push(card1.data);
-        const card2 = await axios.get(superheroAPIAddress + Math.ceil(Math.random()*currentCharactersInLib));
         p2cards.push(card2.data);
     }
     
@@ -52,6 +62,7 @@ app.get("/cardsPlz",async(req, res)=>{
     let p2DeckInfo = [];
     await retrieveHand(p1DeckInfo,p2DeckInfo);
     let gameDeckInfo = {p1Deck : p1DeckInfo, p2Deck : p2DeckInfo};
+    console.log(gameDeckInfo);
     res.json(gameDeckInfo);
 });
 
