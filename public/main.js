@@ -115,6 +115,7 @@ async function playGameMain(url, gameState){
         let compCurrentCard = '';
         let playerCurrentCard = '';
         let battleRes = '';
+        let winner = '';
         //runs the game loop while player or computer has one card in their deck
         while(!(playersDeck.length === 0) && !(computersDeck.length === 0) && !(typeof computersDeck[0] == 'undefined') && !(typeof playersDeck[0] == 'undefined')){
             playState = 'rps';
@@ -142,16 +143,19 @@ async function playGameMain(url, gameState){
             case 0:
                 winnings = manipulateDeckItem('remove',playersDeck,0);
                 computersDeck.push(winnings);
+                winner = playRes[0];
                 console.log(`${playRes[battleRes.winner]} wins! ${playRes[1]}'s card transfered to ${playRes[battleRes.winner]}'s deck`);
                 break;
             case 1:
                 winnings = manipulateDeckItem('remove',computersDeck,0);
                 playersDeck.push(winnings);
+                winner = playRes[1];
                 console.log(`${playRes[battleRes.winner]} wins! ${playRes[0]}'s card transfered to ${playRes[battleRes.winner]}'s deck`);
                 break;
             case 2:
                 manipulateDeckItem('remove',computersDeck,0);
                 manipulateDeckItem('remove',playersDeck,0);
+                winner = playRes[2];
                 console.log(`It's a draw! Both cards are destroyed!`);
                 break;
             default:
@@ -166,8 +170,8 @@ async function playGameMain(url, gameState){
                 manipulateDeckItem('move',computersDeck,0,computersDeck.length - 1)
             }
             console.log(`Players deck size: ${playersDeck.length}\nComputers Deck size: ${computersDeck.length}`);
-
         }
+        console.log(`And the winner is...${winner}!`);
     }catch(error){
         console.log(`An error has occurred during game process: \n${error}`);
     }
