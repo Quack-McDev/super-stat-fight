@@ -2,7 +2,7 @@ let gameState = "mainMen";
 let playState = "rps";
 let deckP1 = [];
 const url = '/cardsPlz'
-const playRes = ['Computer', 'Player', 'Draw'];
+const playRes = ['computer', 'player', 'draw'];
 
 /*
 For the sake of my sanity the computer is int 0 and the player is int 1 and a draw is 2 when referencing winners.
@@ -124,9 +124,12 @@ async function playGameMain(url, gameState){
             compRpsChoice = compPlayerChoice(playState);
             rpsRes = await rps(compRpsChoice,2);//placeholder values for testing, will need to create javascript that creates an interface for button input and pop ups to put player values into play
             console.log(rpsRes.resMessage);
+            //assigns the current playable card to each player
             compCurrentCard = computersDeck[0];
-            playerCurrentCard = playersDeck[0]; 
-            console.log(`Player card: ${playerCurrentCard}\nComputer Card: ${compCurrentCard}`);
+            playerCurrentCard = playersDeck[0];
+            displayCard(playRes[0], compCurrentCard);
+            displayCard(playRes[1], playerCurrentCard);
+            //console.log(`Player card: ${playerCurrentCard}\nComputer Card: ${compCurrentCard}`);//for debugging
             playState = 'cardPlay'
             if(rpsRes.resWinner === 0){
                 let compStatChoice = compPlayerChoice(playState, compCurrentCard);//this declaration is an acception because idk, gonna see if it breaks shit later down the line

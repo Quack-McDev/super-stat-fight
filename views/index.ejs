@@ -5,5 +5,41 @@ Add rock paper scissors game (might change this decision criterion to just be ra
 Add Stat choice submit state
 Add win state
 Add defeat state-->
-<p><%=gameState%></p>
+<%-include('partials/header.ejs')%>
+<div id="blur-container">
+<div class = 'battle-container'>
+    <div id="player-field">
+        <div class="card-container" style="width: 18rem;">
+            <div class="player-card card" style="padding: 0.5rem;">
+                <img class="card-img-top" id='player-card-img' src="https://media.istockphoto.com/id/1287831675/photo/asian-guy-holding-blank-white-advertising-board.jpg?s=612x612&w=0&k=20&c=hOB1jeO5zxFrJQCGV2ioAwKGyZ8MFpvRCVmUrSjt5u4=">
+                <div class="card-body">
+                    <h5 class="card-title" id="player-card-title">Placeholder Man</h5>
+                    <ul class = 'attributes card-text' id="player-card-attr" style="list-style: none;">
+                    </ul>
+                </div>
+            </div>
+            <div id="player-info">
+                <h5 class="player-title">Players Deck</h5>
+                <p>peepee</p>
+            </div>
+        </div>
+    </div>
+    <div id="comp-field">
+        <div class="card-container" style="width: 18rem;">
+            <div class="computer-card card" style="padding: 0.5rem;">
+                <img class="card-img-top" id='computer-card-img' src="https://media.istockphoto.com/id/1287831675/photo/asian-guy-holding-blank-white-advertising-board.jpg?s=612x612&w=0&k=20&c=hOB1jeO5zxFrJQCGV2ioAwKGyZ8MFpvRCVmUrSjt5u4=">
+                <div class="card-body">
+                    <h5 class="card-title" id="computer-card-title">Placeholder Man</h5>
+                    <ul class = 'attributes card-text' id="computer-card-attr" style="list-style: none;">
+                    </ul>
+                </div>
+            </div>
+            <div id="computer-info">
+                <h5 class="computer-title">Computers Deck</h5>
+                <p>peepee</p>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
 <%-include("partials/footer.ejs")%>

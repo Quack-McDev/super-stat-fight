@@ -25,24 +25,29 @@ Give fucntionality to change the state of the screen
 Keep in mind scalability and expansion (Do not hard code numbers and states, keep things fluid and lego-blocks-like)
 */
 async function retrieveHand(p1cards, p2cards){
+    try{
     //pushes card data into p1cards and p2 cards, must be arrays for function to work correctly
      //retrieves amount of card data up to standard hand size and stores it in cardsHand
-     for (let i=0; i<=standardHandSize-1; i++){
-        //retrieves a random character from the available library of characters
-        let card1 = await axios.get(superheroAPIAddress + Math.ceil(Math.random()*currentCharactersInLib));
-        let card2 = await axios.get(superheroAPIAddress + Math.ceil(Math.random()*currentCharactersInLib));
-        for(const stats in card1.data.powerstats){
-            if (card1.data.powerstats[stats] === 'null'){
-                card1.data.powerstats[stats] = 0
+        for (let i=0; i<=standardHandSize-1; i++){
+            //retrieves a random character from the available library of characters
+            let card1 = await axios.get(superheroAPIAddress + Math.ceil(Math.random()*currentCharactersInLib));
+            let card2 = await axios.get(superheroAPIAddress + Math.ceil(Math.random()*currentCharactersInLib));
+            for(const stats in card1.data.powerstats){
+                if (card1.data.powerstats[stats] === 'null'){
+                    card1.data.powerstats[stats] = 0
+                }
             }
-        }
-        for(const prop in card2.data.powerstats){
-            if (card2.data.powerstats[prop] === 'null'){
-                card2.data.powerstats[prop] = 0
+            for(const prop in card2.data.powerstats){
+                if (card2.data.powerstats[prop] === 'null'){
+                    card2.data.powerstats[prop] = 0
+                }
             }
+            p1cards.push(card1.data);
+            p2cards.push(card2.data);
         }
-        p1cards.push(card1.data);
-        p2cards.push(card2.data);
+    }catch(error){
+        console.log(error);
+        return error;
     }
     
 }
